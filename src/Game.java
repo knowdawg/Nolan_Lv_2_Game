@@ -34,6 +34,7 @@ public class Game implements KeyListener{
 	public void keyReleased(KeyEvent e) {
 		if(e.getKeyCode() == KeyEvent.VK_ENTER) {
 			gamePanel.gameState += 1;
+			//gamePanel.paintComponent();
 			System.out.println("PRESSED");
 		}
 	}
