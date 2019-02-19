@@ -16,6 +16,7 @@ public class PaintPanel extends JPanel implements KeyListener, ActionListener{
 	private Color menuColor = Color.BLUE;
 	private Color gameColor = Color.BLACK;
 	private Color endColor = Color.RED;
+	Player player = new Player(100, 100);
 	
 	PaintPanel (){
 		refresh = new Timer(1000 / 60, this);
@@ -37,8 +38,9 @@ public class PaintPanel extends JPanel implements KeyListener, ActionListener{
 					g.setColor(endColor);
 					g.fillRect( 0, 0, 1000, 1000);
 				}
+				
+				player.refresh(g);
 		}
-		
 		
 //																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																			
 	
@@ -57,7 +59,6 @@ public class PaintPanel extends JPanel implements KeyListener, ActionListener{
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		repaint();
-		
 	}
 	
 	
@@ -83,8 +84,18 @@ public class PaintPanel extends JPanel implements KeyListener, ActionListener{
 
 	@Override
 	public void keyPressed(KeyEvent e) {
-		// TODO Auto-generated method stub
-		
+			if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+				player.x -= 10;
+			}
+			if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+				player.x += 10;
+			}
+			if (e.getKeyCode() == KeyEvent.VK_UP) {
+				player.y -= 10;
+			}
+			if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+				player.y += 10;
+			}
 	}
 
 

@@ -5,7 +5,7 @@ import java.awt.event.KeyListener;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-public class Game implements KeyListener{
+public class Game{
 	JFrame gameFrame = new JFrame();
 	PaintPanel gamePanel = new PaintPanel();
 	static final int gameWidth = 1000;
@@ -20,22 +20,9 @@ public class Game implements KeyListener{
 	void setUp() {
 		gameFrame.add(gamePanel);
 		gameFrame.setVisible(true);
-		gameFrame.addKeyListener(this);
+		gameFrame.addKeyListener(gamePanel);
 		gameFrame.setSize(1000, 1000);
 		gameFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
-
-	public void keyTyped(KeyEvent e) {
-	}
-
-	public void keyPressed(KeyEvent e) {
-	}
-
-	public void keyReleased(KeyEvent e) {
-		if(e.getKeyCode() == KeyEvent.VK_ENTER) {
-			gamePanel.gameState += 1;
-			//gamePanel.paintComponent();
-			System.out.println("PRESSED");
-		}
-	}
 }
+
