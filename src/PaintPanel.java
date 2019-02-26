@@ -17,6 +17,7 @@ public class PaintPanel extends JPanel implements KeyListener, ActionListener{
 	private Color gameColor = Color.BLACK;
 	private Color endColor = Color.RED;
 	Player player = new Player(100, 100);
+	Enemy enemy = new Enemy(200, 200);
 	
 	PaintPanel (){
 		refresh = new Timer(1000 / 60, this);
@@ -40,6 +41,7 @@ public class PaintPanel extends JPanel implements KeyListener, ActionListener{
 				}
 				
 				player.refresh(g);
+				enemy.refresh(g, player.x, player.y);
 		}
 		
 //																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																			
@@ -59,6 +61,7 @@ public class PaintPanel extends JPanel implements KeyListener, ActionListener{
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		repaint();
+		enemy.move();
 	}
 	
 	
