@@ -5,13 +5,25 @@ import java.util.Random;
 public class Enemy {
 	
 	Random moveGenerator = new Random();
+	final int roomWidth = 900;
+	final int roomHeight = 900;
+	final int timeTillNextEnlarge = 60;
+	final int moveAmount = 5;
 	int x;
 	int y;
+	int moveToX;
+	int moveToY;
+	
+	int xDirection = 1;
+	int yDirection = 1;
+	
 	double grow = 0;
 	int growth = 0;
 	Enemy (int x, int y){
 		this.x = x;
 		this.y = y;
+		moveToX = moveGenerator.nextInt(roomWidth);
+		moveToY = moveGenerator.nextInt(roomHeight);
 	}
 	
 	void refresh(Graphics g, int playerX, int playerY) {
@@ -22,27 +34,42 @@ public class Enemy {
 	}
 	
 	void move () {
+
+		x += moveAmount * xDirection;
+		y += moveAmount * yDirection;
+		if (xDirection > 0 && x > moveToX) {
+			newMoveToX();
+		} else if (xDirection < 0 && x < moveToX) {
+			newMoveToX();
+		}
 		
-		x += moveGenerator.nextInt(7)- 3;
-		y += moveGenerator.nextInt(7)- 3;
-		
-		if (x < 0) {
-			x = 0;
-		}
-		if (x > 500) {
-			x = 500;
-		}
-		if (y < 0) {
-			y = 0;
-		}
-		if (y > 500) {
-			y = 500;
+		if (yDirection > 0 && y > moveToY) {
+			newMoveToY();
+		} else if (yDirection < 0 && y < moveToY) {
+			newMoveToY();
 		}
 
 		grow += 1;
-		if (grow > 60) {
+		if (grow > timeTillNextEnlarge) {
 			growth += 1;
 			grow = 0;
+		}
+	}
+	
+	void newMoveToX () {
+		moveToX = moveGenerator.nextInt(roomWidth);
+		if (moveToX < x) {
+			xDirection = -1;
+		} else {
+			xDirection = 1;
+		}
+	}
+	void newMoveToY () {
+		moveToY = moveGenerator.nextInt(roomHeight);
+		if (moveToY < y) {
+			yDirection = -1;
+		} else {
+			yDirection = 1;
 		}
 	}
 }

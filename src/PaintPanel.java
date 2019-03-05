@@ -1,23 +1,32 @@
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.MouseInfo;
+import java.awt.Point;
+import java.awt.PointerInfo;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
-public class PaintPanel extends JPanel implements KeyListener, ActionListener{
+public class PaintPanel extends JPanel implements KeyListener, ActionListener, MouseListener{
 	
+	boolean scope = false;
 	Timer refresh;
-	//Player player = new Player(0, 0, );
 	int gameState = 0;
 	private Color menuColor = Color.BLUE;
 	private Color gameColor = Color.BLACK;
 	private Color endColor = Color.RED;
 	Player player = new Player(100, 100);
 	Enemy enemy = new Enemy(200, 200);
+	boolean movingLeft = false;
+	boolean movingRight = false;
+	boolean movingUp = false;
+	boolean movingDown = false;
 	
 	PaintPanel (){
 		refresh = new Timer(1000 / 60, this);
@@ -33,15 +42,50 @@ public class PaintPanel extends JPanel implements KeyListener, ActionListener{
 				if (gameState == 1) {
 					g.setColor(gameColor);
 					g.fillRect( 0, 0, 1000, 1000);
+					player.refresh(g);
+					enemy.refresh(g, player.x, player.y);
+					enemy.move();
+					PointerInfo a = MouseInfo.getPointerInfo();
+					Point b = a.getLocation();
+					int mouse_x = (int) b.getX();
+					int mouse_y = (int) b.getY() - 50;
+					if (scope) {
+						g.setColor(Color.WHITE);
+						g.drawLine(player.x + 12, player.y + 13, mouse_x, mouse_y);
+					}
 				} else
 				
 				if (gameState == 2) {
 					g.setColor(endColor);
 					g.fillRect( 0, 0, 1000, 1000);
+					
 				}
 				
-				player.refresh(g);
-				enemy.refresh(g, player.x, player.y);
+				if (movingLeft) {
+					player.x -= 5;
+				}
+				if (movingRight) {
+					player.x += 5;
+				}
+				if (movingUp) {
+					player.y -= 5;
+				}
+				if (movingDown) {
+					player.y += 5;
+				}
+				
+				if (player.x < 0) {
+					player.x = 0;
+				}
+				if (player.x > 975) {
+					player.x = 975;
+				}
+				if (player.y < 0) {
+					player.y = 0;
+				}
+				if (player.y > 900) {
+					player.y = 900;
+				}
 		}
 		
 //																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																			
@@ -61,16 +105,7 @@ public class PaintPanel extends JPanel implements KeyListener, ActionListener{
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		repaint();
-		enemy.move();
 	}
-	
-	
-	
-	
-	
-	
-	
-	// Totally Important stuff
 	public int getGameState() {
 		return gameState;
 	}
@@ -88,17 +123,54 @@ public class PaintPanel extends JPanel implements KeyListener, ActionListener{
 	@Override
 	public void keyPressed(KeyEvent e) {
 			if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-				player.x -= 10;
+				movingLeft = true;
+			} else {
+				movingLeft = false;
 			}
 			if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-				player.x += 10;
+				movingRight = true;
+			}  else {
+				movingRight = false;
 			}
 			if (e.getKeyCode() == KeyEvent.VK_UP) {
-				player.y -= 10;
+				movingUp = true;
+			} else {
+				movingUp = false;
 			}
 			if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-				player.y += 10;
+				movingDown = true;
+			} else {
+				movingDown = false;
 			}
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+		scope = true;
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		scope = false;
+		
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 
 

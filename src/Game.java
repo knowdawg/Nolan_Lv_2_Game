@@ -21,6 +21,7 @@ public class Game{
 		gameFrame.add(gamePanel);
 		gameFrame.setVisible(true);
 		gameFrame.addKeyListener(gamePanel);
+		gameFrame.addMouseListener(gamePanel);
 		gameFrame.setSize(1000, 1000);
 		gameFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
