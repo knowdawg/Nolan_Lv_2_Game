@@ -9,6 +9,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.ArrayList;
 
 import javax.swing.JPanel;
 import javax.swing.Timer;
@@ -23,6 +24,7 @@ public class PaintPanel extends JPanel implements KeyListener, ActionListener, M
 	private Color endColor = Color.RED;
 	Player player = new Player(100, 100);
 	Enemy enemy = new Enemy(200, 200);
+	ArrayList <Bullet> bullets = new ArrayList <Bullet>();
 	boolean movingLeft = false;
 	boolean movingRight = false;
 	boolean movingUp = false;
@@ -49,9 +51,25 @@ public class PaintPanel extends JPanel implements KeyListener, ActionListener, M
 					Point b = a.getLocation();
 					int mouse_x = (int) b.getX();
 					int mouse_y = (int) b.getY() - 50;
+					
 					if (scope) {
 						g.setColor(Color.WHITE);
 						g.drawLine(player.x + 12, player.y + 13, mouse_x, mouse_y);
+					}
+					
+					for (Bullet bullet : bullets) {
+						bullet.refresh(g);
+						if (bullet.xDirection > 0 && bullet.x > bullet.moveToX) {
+							bullets.remove(bullet);
+						} else if (bullet.xDirection < 0 && bullet.x < bullet.moveToX) {
+							bullets.remove(bullet);
+						}
+						
+						if (bullet.yDirection > 0 && bullet.y > bullet.moveToY) {
+							bullets.remove(bullet);
+						} else if (bullet.yDirection < 0 && bullet.y < bullet.moveToY) {
+							bullets.remove(bullet);
+						}
 					}
 				} else
 				
@@ -158,7 +176,9 @@ public class PaintPanel extends JPanel implements KeyListener, ActionListener, M
 	@Override
 	public void mouseReleased(MouseEvent e) {
 		scope = false;
-		
+		int mouse_x = e.getX();
+		int mouse_y = e.getY() - 20;
+		bullets.add(new Bullet(player.x + 12, player.y + 13, mouse_x, mouse_y, player.x, player.y));
 	}
 
 	@Override
