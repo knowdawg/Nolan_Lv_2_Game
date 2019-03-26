@@ -19,6 +19,8 @@ public class PaintPanel extends JPanel implements KeyListener, ActionListener, M
 	boolean scope = false;
 	Timer refresh;
 	int gameState = 0;
+	int gameSize = 100;
+	final int playerSpeed = 5;
 	private Color menuColor = Color.BLUE;
 	private Color gameColor = Color.BLACK;
 	private Color endColor = Color.RED;
@@ -44,9 +46,15 @@ public class PaintPanel extends JPanel implements KeyListener, ActionListener, M
 				if (gameState == 1) {
 					g.setColor(gameColor);
 					g.fillRect( 0, 0, 1000, 1000);
+					g.setColor(Color.GRAY);
+					g.drawRect(0, 0, 100, 1000);
+					g.drawRect(0, 0, 1000, 100);
+					g.drawRect(900, 0, 100, 1000);
+					g.drawRect(0, 875, 1000, 125);
+					g.drawRect(450, 450, 100, 100);
 					player.refresh(g);
-					enemy.refresh(g, player.x, player.y);
-					enemy.move();
+						enemy.refresh(g, player.x, player.y);
+						enemy.move();
 					PointerInfo a = MouseInfo.getPointerInfo();
 					Point b = a.getLocation();
 					int mouse_x = (int) b.getX();
@@ -75,34 +83,38 @@ public class PaintPanel extends JPanel implements KeyListener, ActionListener, M
 				
 				if (gameState == 2) {
 					g.setColor(endColor);
-					g.fillRect( 0, 0, 1000, 1000);
+					g.fillRect( 0, 0, gameSize, gameSize);
 					
 				}
 				
 				if (movingLeft) {
-					player.x -= 5;
+					player.x -= playerSpeed;
 				}
 				if (movingRight) {
-					player.x += 5;
+					player.x += playerSpeed;
 				}
 				if (movingUp) {
-					player.y -= 5;
+					player.y -= playerSpeed;
 				}
 				if (movingDown) {
-					player.y += 5;
+					player.y += playerSpeed;
 				}
 				
-				if (player.x < 0) {
-					player.x = 0;
+				if (player.x < 100) {
+					player.x = 100;
 				}
-				if (player.x > 975) {
-					player.x = 975;
+				if (player.x > 875) {
+					player.x = 875;
 				}
-				if (player.y < 0) {
-					player.y = 0;
+				if (player.y < 100) {
+					player.y = 100;
 				}
-				if (player.y > 900) {
-					player.y = 900;
+				if (player.y > 850) {
+					player.y = 850;
+				}
+				
+				if (player.x < 100) {
+					player.x = 100;
 				}
 		}
 		

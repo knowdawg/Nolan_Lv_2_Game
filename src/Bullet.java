@@ -3,8 +3,9 @@ import java.awt.Graphics;
 
 public class Bullet {
 	
-	int x;
-	int y;
+	double x;
+	double y;
+	int bulletMoveSpeed = 10;
 	int moveToX;
 	int moveToY;
 	int xDirection;
@@ -14,22 +15,20 @@ public class Bullet {
 	
 	Bullet(int x, int y, int moveToX, int moveToY, int playerX, int playerY){
 		
-		if (moveToX < x) {
-			xDirection = -1;
-		} else {
-			xDirection = 1;
-		}
-		
-		if (moveToY < y) {
-			yDirection = -1;
-		} else {
-			yDirection = 1;
-		}
-		
+		double xdiff = x - moveToX;
+		double ydiff = y - moveToY;
+		double direction = Math.atan(ydiff/xdiff);
+				
 		this.moveToX = moveToY;
 		this.moveToY = moveToY;
-		xDistance = Math.abs(x - moveToX) / 30;
-		yDistance = Math.abs(y - moveToY) / 30;
+		xDistance = (Math.cos(direction) * bulletMoveSpeed);
+		yDistance = (Math.sin(direction) * bulletMoveSpeed);
+		
+		if( x > moveToX ) {
+			xDistance *= -1;
+			yDistance *= -1;
+		}
+		
 		//x = moveToX;
 		//y = moveToY;
 		
@@ -53,10 +52,10 @@ public class Bullet {
 		}
 		*/
 		g.setColor(Color.YELLOW);
-		g.fillRect(x, y, 5, 5);
+		g.fillRect((int)x, (int)y, bulletMoveSpeed, bulletMoveSpeed);
 		
-		x += xDistance * xDirection;
-		y += yDistance * yDirection;
+		x += xDistance;
+		y += yDistance;
 	}
 			
 }
