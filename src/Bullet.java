@@ -1,10 +1,13 @@
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Rectangle;
 
 public class Bullet {
 	
 	double x;
 	double y;
+	Rectangle collisionBox;
+	boolean isAlive = true;
 	int bulletMoveSpeed = 10;
 	int moveToX;
 	int moveToY;
@@ -19,7 +22,7 @@ public class Bullet {
 		double ydiff = y - moveToY;
 		double direction = Math.atan(ydiff/xdiff);
 				
-		this.moveToX = moveToY;
+		this.moveToX = moveToX;
 		this.moveToY = moveToY;
 		xDistance = (Math.cos(direction) * bulletMoveSpeed);
 		yDistance = (Math.sin(direction) * bulletMoveSpeed);
@@ -34,28 +37,29 @@ public class Bullet {
 		
 		this.x = x;
 		this.y = y;
+		collisionBox = new Rectangle(x, y, 10, 10);
+
 	}
 	
 	void refresh(Graphics g){
 		
-		/*
-		if (xDirection > 0 && x > moveToX) {
-			
-		} else if (xDirection < 0 && x < moveToX) {
-			
-		}
-		
-		if (yDirection > 0 && y > moveToY) {
-
-		} else if (yDirection < 0 && y < moveToY) {
-
-		}
-		*/
 		g.setColor(Color.YELLOW);
 		g.fillRect((int)x, (int)y, bulletMoveSpeed, bulletMoveSpeed);
-		
+		collisionBox.setBounds((int)x, (int)y, bulletMoveSpeed, bulletMoveSpeed);
 		x += xDistance;
 		y += yDistance;
 	}
 			
 }
+
+
+
+
+
+
+
+
+
+
+
+

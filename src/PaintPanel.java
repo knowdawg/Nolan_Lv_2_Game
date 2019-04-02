@@ -21,12 +21,14 @@ public class PaintPanel extends JPanel implements KeyListener, ActionListener, M
 	int gameState = 0;
 	int gameSize = 100;
 	final int playerSpeed = 5;
+	final int enemySpawnTime = 60;
+	int timeTillEnemySpawn = 0;
 	private Color menuColor = Color.BLUE;
 	private Color gameColor = Color.BLACK;
 	private Color endColor = Color.RED;
 	Player player = new Player(100, 100);
-	Enemy enemy = new Enemy(200, 200);
 	ArrayList <Bullet> bullets = new ArrayList <Bullet>();
+	ArrayList <Enemy> enemies = new ArrayList <Enemy>();
 	boolean movingLeft = false;
 	boolean movingRight = false;
 	boolean movingUp = false;
@@ -51,10 +53,14 @@ public class PaintPanel extends JPanel implements KeyListener, ActionListener, M
 					g.drawRect(0, 0, 1000, 100);
 					g.drawRect(900, 0, 100, 1000);
 					g.drawRect(0, 875, 1000, 125);
-					g.drawRect(450, 450, 100, 100);
+					
 					player.refresh(g);
+					
+					for (Enemy enemy : enemies) {
 						enemy.refresh(g, player.x, player.y);
 						enemy.move();
+					}
+					
 					PointerInfo a = MouseInfo.getPointerInfo();
 					Point b = a.getLocation();
 					int mouse_x = (int) b.getX();
@@ -67,17 +73,31 @@ public class PaintPanel extends JPanel implements KeyListener, ActionListener, M
 					
 					for (Bullet bullet : bullets) {
 						bullet.refresh(g);
-						if (bullet.xDirection > 0 && bullet.x > bullet.moveToX) {
-							bullets.remove(bullet);
-						} else if (bullet.xDirection < 0 && bullet.x < bullet.moveToX) {
-							bullets.remove(bullet);
+					}
+					
+				  for(Bullet l : bullets){
+					  for(Enemy f : enemies){
+					        if(f.collisionBox.intersects(l.collisionBox)){
+					        		f.isAlive = false;
+					             l.isAlive = false;
+					             System.out.println("COLIDE");
+					        	}
+				        	}
+				  }
+				  
+				  for (int d = 0; d < bullets.size(); d ++) {
+					  
+						if (bullets.get(d).isAlive == false) {
+							bullets.remove(d);
+						}
+					}
+				  
+				  for (int c = 0; c < enemies.size(); c ++) {
+						
+						if (enemies.get(c).isAlive == false) {
+							enemies.remove(c);
 						}
 						
-						if (bullet.yDirection > 0 && bullet.y > bullet.moveToY) {
-							bullets.remove(bullet);
-						} else if (bullet.yDirection < 0 && bullet.y < bullet.moveToY) {
-							bullets.remove(bullet);
-						}
 					}
 				} else
 				
@@ -135,6 +155,12 @@ public class PaintPanel extends JPanel implements KeyListener, ActionListener, M
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		repaint();
+		timeTillEnemySpawn += 1;
+		
+		if (enemySpawnTime == timeTillEnemySpawn) {
+			enemies.add(new Enemy(0, 0));
+			timeTillEnemySpawn = 0;
+		}
 	}
 	public int getGameState() {
 		return gameState;
