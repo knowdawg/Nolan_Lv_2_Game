@@ -22,6 +22,8 @@ public class PaintPanel extends JPanel implements KeyListener, ActionListener, M
 	int gameSize = 100;
 	final int playerSpeed = 5;
 	final int enemySpawnTime = 60;
+	int nemieSpawnTime = 120;
+	int timeTillNemieSpawn = 0;
 	int timeTillEnemySpawn = 0;
 	private Color menuColor = Color.BLUE;
 	private Color gameColor = Color.BLACK;
@@ -29,6 +31,7 @@ public class PaintPanel extends JPanel implements KeyListener, ActionListener, M
 	Player player = new Player(100, 100);
 	ArrayList <Bullet> bullets = new ArrayList <Bullet>();
 	ArrayList <Enemy> enemies = new ArrayList <Enemy>();
+	ArrayList <Nemesis> nemesis = new ArrayList <Nemesis>();
 	boolean movingLeft = false;
 	boolean movingRight = false;
 	boolean movingUp = false;
@@ -37,6 +40,7 @@ public class PaintPanel extends JPanel implements KeyListener, ActionListener, M
 	PaintPanel (){
 		refresh = new Timer(1000 / 60, this);
 		refresh.start();
+		nemesis.add(new Nemesis(0,0, player.x, player.y));
 	}
 
 		public void paintComponent(Graphics g) {
@@ -61,6 +65,10 @@ public class PaintPanel extends JPanel implements KeyListener, ActionListener, M
 						enemy.move();
 					}
 					
+					for (Nemesis nemies : nemesis) {
+						nemies.refresh(g, player.x, player.y);
+					}
+					
 					PointerInfo a = MouseInfo.getPointerInfo();
 					Point b = a.getLocation();
 					int mouse_x = (int) b.getX();
@@ -80,10 +88,50 @@ public class PaintPanel extends JPanel implements KeyListener, ActionListener, M
 					        if(f.collisionBox.intersects(l.collisionBox)){
 					        		f.isAlive = false;
 					             l.isAlive = false;
-					             System.out.println("COLIDE");
+				            	 player.score += 1;
+					             if (f.growth > 5) {
+					            	 	player.lives -= f.growth / 2;
+					            	 	g.setColor(Color.RED);
+						            	g.fillRect(0, 0, 1000, 1000);
+					             }
 					        	}
 				        	}
 				  }
+				  
+				  for(Bullet l : bullets){
+					  for(Nemesis n : nemesis){
+					        if(n.collisionBox.intersects(l.collisionBox)){
+					        		n.isAlive = false;
+					             l.isAlive = false;
+				            	 player.score += 1;
+					        	}
+				        	}
+				  }
+				  
+
+					  for(Nemesis n : nemesis){
+					        if(n.collisionBox.intersects(player.collisionBox)){
+					        		n.isAlive = false;
+					        		player.lives -= 20;
+					            	g.setColor(Color.RED);
+					            	g.fillRect(0, 0, 1000, 1000);
+					            	 player.score += 1;
+					        	}
+				        	}
+				  
+
+				  for(Enemy f : enemies){
+					  if(f.collisionBox.intersects(player.collisionBox)){
+					   	f.isAlive = false;
+					       if (f.growth > 5) {
+					            	 player.lives -= f.growth * 2;
+					            	 g.setColor(Color.RED);
+					            	 g.fillRect(0, 0, 1000, 1000);
+					           }
+			            	 player.score += 1;
+					       }
+				       }
+				 
 				  
 				  for (int d = 0; d < bullets.size(); d ++) {
 					  
@@ -96,6 +144,14 @@ public class PaintPanel extends JPanel implements KeyListener, ActionListener, M
 						
 						if (enemies.get(c).isAlive == false) {
 							enemies.remove(c);
+						}
+						
+					}
+				  
+				  for (int c = 0; c < nemesis.size(); c ++) {
+						
+						if (nemesis.get(c).isAlive == false) {
+							nemesis.remove(c);
 						}
 						
 					}
@@ -156,10 +212,15 @@ public class PaintPanel extends JPanel implements KeyListener, ActionListener, M
 	public void actionPerformed(ActionEvent e) {
 		repaint();
 		timeTillEnemySpawn += 1;
+		timeTillNemieSpawn += 1;
 		
 		if (enemySpawnTime == timeTillEnemySpawn) {
 			enemies.add(new Enemy(0, 0));
 			timeTillEnemySpawn = 0;
+		}
+		if (nemieSpawnTime == timeTillNemieSpawn) {
+			nemesis.add(new Nemesis(0,0, player.x, player.y));
+			timeTillNemieSpawn = 0;
 		}
 	}
 	public int getGameState() {
