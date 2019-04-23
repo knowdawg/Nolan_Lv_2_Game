@@ -8,7 +8,7 @@ public class Bullet {
 	double y;
 	Rectangle collisionBox;
 	boolean isAlive = true;
-	int bulletMoveSpeed = 10;
+	int bulletMoveSpeed = 20;
 	int moveToX;
 	int moveToY;
 	int xDirection;
@@ -41,8 +41,7 @@ public class Bullet {
 
 	}
 	
-	void refresh(Graphics g){
-		
+	void refresh(Graphics g) {
 		g.setColor(Color.YELLOW);
 		g.fillRect((int)x, (int)y, bulletMoveSpeed, bulletMoveSpeed);
 		collisionBox.setBounds((int)x, (int)y, bulletMoveSpeed, bulletMoveSpeed);

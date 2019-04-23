@@ -9,7 +9,7 @@ import java.awt.event.MouseListener;
 public class Player{
 	int x;
 	int y;
-	int lives = 200;
+	int lives = 800;
 	int score = 0;
 	Rectangle collisionBox;
 	
@@ -24,12 +24,11 @@ public class Player{
 		g.fillRect(x, y, 25, 25);
 		
 		g.setColor(Color.GREEN);
-		g.drawRect(400, 0, 200, 20);
+		g.drawRect(100, 0, 800, 20);
 		
 		g.setColor(Color.RED);
-		g.fillRect(400, 0, lives, 20);
+		g.fillRect(100, 0, lives, 20);
 		
 		collisionBox.setBounds(x, y, 25, 25);
-		System.out.println(score);
 	}
 }

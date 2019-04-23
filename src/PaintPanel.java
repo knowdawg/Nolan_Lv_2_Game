@@ -1,4 +1,5 @@
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.MouseInfo;
 import java.awt.Point;
@@ -10,6 +11,7 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
+import java.util.Random;
 
 import javax.swing.JPanel;
 import javax.swing.Timer;
@@ -19,9 +21,9 @@ public class PaintPanel extends JPanel implements KeyListener, ActionListener, M
 	boolean scope = false;
 	Timer refresh;
 	int gameState = 0;
-	int gameSize = 100;
+	int gameSize = 1000;
 	final int playerSpeed = 5;
-	final int enemySpawnTime = 60;
+	int enemySpawnTime = 60;
 	int nemieSpawnTime = 120;
 	int timeTillNemieSpawn = 0;
 	int timeTillEnemySpawn = 0;
@@ -36,6 +38,10 @@ public class PaintPanel extends JPanel implements KeyListener, ActionListener, M
 	boolean movingRight = false;
 	boolean movingUp = false;
 	boolean movingDown = false;
+	Font titleFont = new Font("Arial", Font.BOLD, 40);
+	Font scoreFont = new Font("Arial", Font.PLAIN, 25);
+	int lessEnemySpawn = 0;
+	int moreEnemies = 0;
 	
 	PaintPanel (){
 		refresh = new Timer(1000 / 60, this);
@@ -89,10 +95,12 @@ public class PaintPanel extends JPanel implements KeyListener, ActionListener, M
 					        		f.isAlive = false;
 					             l.isAlive = false;
 				            	 player.score += 1;
-					             if (f.growth > 5) {
+					             if (f.growth > 25) {
 					            	 	player.lives -= f.growth / 2;
 					            	 	g.setColor(Color.RED);
 						            	g.fillRect(0, 0, 1000, 1000);
+					             } else {
+					            	 	player.lives += 1;
 					             }
 					        	}
 				        	}
@@ -103,7 +111,8 @@ public class PaintPanel extends JPanel implements KeyListener, ActionListener, M
 					        if(n.collisionBox.intersects(l.collisionBox)){
 					        		n.isAlive = false;
 					             l.isAlive = false;
-				            	 player.score += 1;
+					             player.score += 1;
+					             player.lives += 3;
 					        	}
 				        	}
 				  }
@@ -115,7 +124,6 @@ public class PaintPanel extends JPanel implements KeyListener, ActionListener, M
 					        		player.lives -= 20;
 					            	g.setColor(Color.RED);
 					            	g.fillRect(0, 0, 1000, 1000);
-					            	 player.score += 1;
 					        	}
 				        	}
 				  
@@ -127,8 +135,10 @@ public class PaintPanel extends JPanel implements KeyListener, ActionListener, M
 					            	 player.lives -= f.growth * 2;
 					            	 g.setColor(Color.RED);
 					            	 g.fillRect(0, 0, 1000, 1000);
+					           } else {
+					        	   	 player.score += 1;
+					        	   	 player.lives += 1;
 					           }
-			            	 player.score += 1;
 					       }
 				       }
 				 
@@ -155,11 +165,27 @@ public class PaintPanel extends JPanel implements KeyListener, ActionListener, M
 						}
 						
 					}
+				  if (player.lives < 0){
+					  gameState += 1;
+				  }
+				  
+				  if (timeTillEnemySpawn > 60 && lessEnemySpawn < 60) {
+					  lessEnemySpawn += 1;
+					  System.out.println(lessEnemySpawn);
+					  moreEnemies = 0;
+					  
+				  }
+				  
 				} else
 				
 				if (gameState == 2) {
 					g.setColor(endColor);
 					g.fillRect( 0, 0, gameSize, gameSize);
+					g.setColor(Color.black);
+					g.setFont(titleFont);
+					g.drawString("GAME OVER", 320, 450);
+					g.setFont(scoreFont);
+					g.drawString("Your Score is " + player.score, 350, 550);
 					
 				}
 				
@@ -213,13 +239,13 @@ public class PaintPanel extends JPanel implements KeyListener, ActionListener, M
 		repaint();
 		timeTillEnemySpawn += 1;
 		timeTillNemieSpawn += 1;
-		
-		if (enemySpawnTime == timeTillEnemySpawn) {
-			enemies.add(new Enemy(0, 0));
+		Random randi = new Random();
+		if (enemySpawnTime - lessEnemySpawn < timeTillEnemySpawn) {
+			enemies.add(new Enemy(randi.nextInt(1000), 0));
 			timeTillEnemySpawn = 0;
 		}
-		if (nemieSpawnTime == timeTillNemieSpawn) {
-			nemesis.add(new Nemesis(0,0, player.x, player.y));
+		if (nemieSpawnTime - lessEnemySpawn < timeTillNemieSpawn) {
+			nemesis.add(new Nemesis(randi.nextInt(1000), 0, player.x, player.y));
 			timeTillNemieSpawn = 0;
 		}
 	}

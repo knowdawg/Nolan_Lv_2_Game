@@ -16,10 +16,9 @@ public class Enemy {
 	int y;
 	int moveToX;
 	int moveToY;
-	
+	int blink = 0;
 	int xDirection = 1;
 	int yDirection = 1;
-	
 	double grow = 0;
 	int growth = 0;
 	Enemy (int x, int y){
@@ -31,12 +30,24 @@ public class Enemy {
 	}
 	
 	void refresh(Graphics g, int playerX, int playerY) {
-		g.setColor(Color.RED);
+		
+		blink += 1;
+		
+		g.setColor(Color.GREEN);
 		g.fillRect(x, y, 20 + growth, 20 + growth);
 		collisionBox.setBounds(x, y, 20 + growth, 20 + growth);
-		g.setColor(Color.GREEN);
+		g.setColor(Color.YELLOW);
 		g.drawLine(x + 10 + growth / 2, y + 10 + growth / 2, playerX + 12, playerY + 13);
 		g.drawRect(x, y, 20 + growth, 20 + growth);
+		
+		if (growth > 25 && blink > 20) {
+	    	 	g.setColor(Color.RED);
+	        	g.fillRect(x, y, 20 + growth, 20 + growth);
+	    }
+		
+		if (blink > 40) {
+			blink = 0;
+		}
 	}
 	
 	void move () {
@@ -57,7 +68,7 @@ public class Enemy {
 
 		grow += 1;
 		if (grow > timeTillNextEnlarge) {
-			growth += 1;
+			growth += 5;
 			grow = 0;
 		}
 	}
