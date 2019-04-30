@@ -13,6 +13,7 @@ import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.Random;
 
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
@@ -38,10 +39,10 @@ public class PaintPanel extends JPanel implements KeyListener, ActionListener, M
 	boolean movingRight = false;
 	boolean movingUp = false;
 	boolean movingDown = false;
+	double moreEnemies = 0.0;
+	int bonusPoints = 0;
 	Font titleFont = new Font("Arial", Font.BOLD, 40);
 	Font scoreFont = new Font("Arial", Font.PLAIN, 25);
-	int lessEnemySpawn = 0;
-	int moreEnemies = 0;
 	
 	PaintPanel (){
 		refresh = new Timer(1000 / 60, this);
@@ -53,9 +54,24 @@ public class PaintPanel extends JPanel implements KeyListener, ActionListener, M
 				if (gameState == 0) {
 					g.setColor(menuColor);
 					g.fillRect( 0, 0, 1000, 1000);
+					g.setColor(Color.RED);
+					g.setFont(titleFont);
+					g.drawString("Welcome To Zyqupixzy!", 300, 100);
+					g.setFont(scoreFont);
+					g.drawString("Prepare yourself for insane intensity", 200, 300);
+					g.drawString("Enter to Start", 350, 400);				
+					g.drawString("Space For Instuctions", 300, 500);
+					g.drawString("Shoot as many pionts as posible to increase you score!", 150, 600);
+					if (player.lives < 1) {
+						player.lives = 799;
+						terminateAll();
+					}
+					
 				} else
 		
 				if (gameState == 1) {
+					
+					
 					g.setColor(gameColor);
 					g.fillRect( 0, 0, 1000, 1000);
 					g.setColor(Color.GRAY);
@@ -65,6 +81,12 @@ public class PaintPanel extends JPanel implements KeyListener, ActionListener, M
 					g.drawRect(0, 875, 1000, 125);
 					
 					player.refresh(g);
+					
+					if (player.lives == 800) {
+						g.setColor(Color.WHITE);
+						g.setFont(scoreFont);
+						g.drawString("100% life streak: " + bonusPoints, 425, 100);
+					}
 					
 					for (Enemy enemy : enemies) {
 						enemy.refresh(g, player.x, player.y);
@@ -94,6 +116,12 @@ public class PaintPanel extends JPanel implements KeyListener, ActionListener, M
 					        if(f.collisionBox.intersects(l.collisionBox)){
 					        		f.isAlive = false;
 					             l.isAlive = false;
+					             if (player.lives == 800) {
+					            	 	bonusPoints += 1;
+					            	 	player.score += 1;
+					             } else {
+					            	 	bonusPoints = 0;
+					             }
 				            	 player.score += 1;
 					             if (f.growth > 25) {
 					            	 	player.lives -= f.growth / 2;
@@ -111,6 +139,12 @@ public class PaintPanel extends JPanel implements KeyListener, ActionListener, M
 					        if(n.collisionBox.intersects(l.collisionBox)){
 					        		n.isAlive = false;
 					             l.isAlive = false;
+					             if (player.lives == 800) {
+					            	 	bonusPoints += 1;
+					            	 	player.score += 1;
+					             } else {
+					            	 	bonusPoints = 0;
+					             }
 					             player.score += 1;
 					             player.lives += 3;
 					        	}
@@ -168,25 +202,25 @@ public class PaintPanel extends JPanel implements KeyListener, ActionListener, M
 				  if (player.lives < 0){
 					  gameState += 1;
 				  }
-				  
-				  if (timeTillEnemySpawn > 60 && lessEnemySpawn < 60) {
-					  lessEnemySpawn += 1;
-					  System.out.println(lessEnemySpawn);
-					  moreEnemies = 0;
-					  
-				  }
-				  
 				} else
 				
 				if (gameState == 2) {
 					g.setColor(endColor);
 					g.fillRect( 0, 0, gameSize, gameSize);
 					g.setColor(Color.black);
-					g.setFont(titleFont);
-					g.drawString("GAME OVER", 320, 450);
+					if (player.lives < 1) {
+						g.setFont(titleFont);
+						g.drawString("GAME OVER", 320, 450);
+					} else {
+						g.setFont(titleFont);
+						g.drawString("GAME PAUSED", 320, 450);
+					}
 					g.setFont(scoreFont);
 					g.drawString("Your Score is " + player.score, 350, 550);
 					
+				}
+				if(gameState == 3) {
+					gameState = 0;
 				}
 				
 				if (movingLeft) {
@@ -234,19 +268,30 @@ public class PaintPanel extends JPanel implements KeyListener, ActionListener, M
 		
 	}
 	
+	int count = 0;
 	@Override
+	
 	public void actionPerformed(ActionEvent e) {
 		repaint();
-		timeTillEnemySpawn += 1;
-		timeTillNemieSpawn += 1;
-		Random randi = new Random();
-		if (enemySpawnTime - lessEnemySpawn < timeTillEnemySpawn) {
-			enemies.add(new Enemy(randi.nextInt(1000), 0));
-			timeTillEnemySpawn = 0;
-		}
-		if (nemieSpawnTime - lessEnemySpawn < timeTillNemieSpawn) {
-			nemesis.add(new Nemesis(randi.nextInt(1000), 0, player.x, player.y));
-			timeTillNemieSpawn = 0;
+		if(gameState == 1) {
+			timeTillEnemySpawn += 1;
+			timeTillNemieSpawn += 1;
+			count += 5;
+			if (count > 60){
+				count = 0;
+				if (moreEnemies < 90) {
+					moreEnemies += 1;
+				}
+			}
+			Random randi = new Random();
+			if (enemySpawnTime  - (int)(moreEnemies / 2) < timeTillEnemySpawn) {
+				enemies.add(new Enemy(randi.nextInt(1000), 0));
+				timeTillEnemySpawn = 0;
+			}
+			if (nemieSpawnTime - (int)(moreEnemies) < timeTillNemieSpawn) {
+				nemesis.add(new Nemesis(randi.nextInt(1000), 0, player.x, player.y));
+				timeTillNemieSpawn = 0;
+			}
 		}
 	}
 	public int getGameState() {
@@ -265,6 +310,11 @@ public class PaintPanel extends JPanel implements KeyListener, ActionListener, M
 
 	@Override
 	public void keyPressed(KeyEvent e) {
+		
+			if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+				JOptionPane.showMessageDialog(null, "Arrow Keys to Move!!!! Click to shoot! Shoot Greens quickly or they deal MASSIVE damge when they die!!! Pink enemies are the living embodiment of annoyance... Good Luck!");
+			}
+		
 			if (e.getKeyCode() == KeyEvent.VK_LEFT) {
 				movingLeft = true;
 			} else {
@@ -317,6 +367,15 @@ public class PaintPanel extends JPanel implements KeyListener, ActionListener, M
 		// TODO Auto-generated method stub
 		
 	}
-
+	
+	void terminateAll(){
+		for(Nemesis n : nemesis){
+			n.isAlive = false;
+        	}
+		for(Enemy e : enemies){
+			e.isAlive = false;
+        	}
+		moreEnemies = 0;
+	}
 
 }

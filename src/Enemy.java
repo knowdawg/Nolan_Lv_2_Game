@@ -11,7 +11,7 @@ public class Enemy {
 	final int roomWidth = 900;
 	final int roomHeight = 900;
 	final int timeTillNextEnlarge = 60;
-	final int moveAmount = 5;
+	final int moveAmount = 2;
 	int x;
 	int y;
 	int moveToX;
